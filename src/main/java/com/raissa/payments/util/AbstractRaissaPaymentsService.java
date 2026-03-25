@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.Set;
+
 public class AbstractRaissaPaymentsService extends AbstractService {
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -38,6 +40,14 @@ public class AbstractRaissaPaymentsService extends AbstractService {
     public static void deleteValidation(Auditoria entity) {
         if (StringUtil.equiv(entity.getEstadoRegistro(), EstadoRegistroEnum.NO_VIGENTE.getValor())) {
             throw new InvalidEstadoException(EstadoRegistroEnum.NO_VIGENTE.getDescripcion(), "Eliminar");
+        }
+    }
+
+    protected String validarSortField(String sortField, Set<String> validFields, String defaultField) {
+        if (sortField == null) {
+            return defaultField;
+        } else {
+            return validFields.contains(sortField) ? sortField : defaultField;
         }
     }
 }

@@ -21,7 +21,7 @@ public class UsuarioResponseDto {
     private String numeroDocumento;
     private String tipoUsuario;
     private String claseUsuario;
-    private EstadoRegistroEnum estadoRegistro;
     private String idEmpresa;
+    private EstadoRegistroEnum estadoRegistro;
     private String audiFechIns;
 }
