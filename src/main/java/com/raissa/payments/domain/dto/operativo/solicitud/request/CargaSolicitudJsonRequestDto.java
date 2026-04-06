@@ -9,6 +9,7 @@ import java.util.List;
 public class CargaSolicitudJsonRequestDto {
     Long codigoCliente;
     String usuarioCarga;
+    String tipoCarga;
     List<LineaCargaRequestDto> lineas;
 
     LocalDateTime fechaAuditoria;

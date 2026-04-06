@@ -4,12 +4,15 @@ import com.raissa.comun.general.dto.SearchRequestDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class SolicitudSearchDto extends SearchRequestDTO {
     private String usuario;
-    private String fecha;
+    private String fechaInicial;
+    private String fechaFinal;
     private String codigo;
-    private String estadoSolicitud;
+    private List<String> estadoSolicitud;
     private Long codigoCliente;
 }
