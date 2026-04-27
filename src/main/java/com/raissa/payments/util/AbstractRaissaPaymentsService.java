@@ -10,9 +10,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.security.SecureRandom;
 import java.util.Set;
 
 public class AbstractRaissaPaymentsService extends AbstractService {
+    private final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private final SecureRandom random = new SecureRandom();
+
     public String getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -49,5 +53,25 @@ public class AbstractRaissaPaymentsService extends AbstractService {
         } else {
             return validFields.contains(sortField) ? sortField : defaultField;
         }
+    }
+
+    protected String generarCodigo(int longitud) {
+        StringBuilder codigo = new StringBuilder(longitud);
+
+        for (int i = 0; i < longitud; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            codigo.append(CHARACTERS.charAt(index));
+        }
+
+        return codigo.toString();
+    }
+
+    protected String formatearNombre(String nombres, String apellido) {
+        if (nombres == null || nombres.isEmpty()) {
+            return apellido;
+        }
+
+        String inicial = nombres.substring(0, 1).toUpperCase();
+        return inicial + ". " + apellido;
     }
 }

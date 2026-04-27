@@ -1,6 +1,7 @@
 package com.raissa.payments.rest.operativo.solicitud;
 
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionFlujoSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.SolicitudSearchDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.SolicitudSearchResponseDto;
 import com.raissa.payments.service.operativo.solicitud.SolicitudService;
@@ -27,6 +28,12 @@ public class SolicitudRest {
     public ResponseEntity<Long> validarSolicitudes(@RequestBody FlujoSolicitudRequestDto flujo,
                                                    HttpServletRequest request) {
         return ResponseEntity.ok(solicitudService.flujoSolicitud(flujo, request));
+    }
+
+    @PostMapping("/flujo-solicitud-observacion")
+    public ResponseEntity<Long> observarSolicitudes(@RequestBody ObservacionFlujoSolicitudRequestDto flujo,
+                                                   HttpServletRequest request) {
+        return ResponseEntity.ok(solicitudService.flujoSolicitudObservacion(flujo, request));
     }
 
     @PostMapping("/tracking")

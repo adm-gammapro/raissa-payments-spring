@@ -15,4 +15,5 @@ public class SolicitudSearchDto extends SearchRequestDTO {
     private String codigo;
     private List<String> estadoSolicitud;
     private Long codigoCliente;
+    private String usuarioActual;
 }

@@ -1,8 +1,10 @@
 package com.raissa.payments.domain.dto.operativo.solicitud.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class FlujoSolicitudRequestDto {
     Long idSolicitud;
     String flujo;

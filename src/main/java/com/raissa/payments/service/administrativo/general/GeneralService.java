@@ -8,8 +8,9 @@ public interface GeneralService {
     /**
      * Devuelve la lista de instituciones financieras vinculadas al cliente
      *
-     * @param codigoCliente identificador unico de cliente
      * @return {@link List<InstitucionFinancieraResponseDto>}
      */
     List<InstitucionFinancieraResponseDto> listarInstitucionFinanciera();
+
+    String obtenerCodigoRandom(String username, String passwordPlano, String modoEnvio);
 }

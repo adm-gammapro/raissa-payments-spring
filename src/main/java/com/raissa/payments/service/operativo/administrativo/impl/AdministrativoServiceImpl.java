@@ -2,11 +2,14 @@ package com.raissa.payments.service.operativo.administrativo.impl;
 
 import com.raissa.comun.util.Constante;
 import com.raissa.payments.commons.RestResponsePage;
+import com.raissa.payments.domain.dto.administrativo.response.UsuarioResponseDto;
 import com.raissa.payments.domain.dto.commons.ClienteDataSourceResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaConnectRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaSearchConnectDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaSearchDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaUsuarioConnectRequestDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaUsuarioRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ConfiguracionReglaConnectRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ConfiguracionReglaRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ConfiguracionReglaSearchConnectDto;
@@ -19,6 +22,8 @@ import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoC
 import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoSearchConnectDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoSearchDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.VinculoCategoriaUsuarioConnectRequestDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.VinculoCategoriaUsuarioRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.CategoriaConnectResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.CategoriaResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.ConfiguracionReglaConnectResponseDto;
@@ -27,6 +32,11 @@ import com.raissa.payments.domain.dto.operativo.administrativo.response.ReglaCon
 import com.raissa.payments.domain.dto.operativo.administrativo.response.ReglaResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.TipoPagoConnectResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.TipoPagoResponseDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.response.VinculoCategoriaUsuarioConnectResponseDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.response.VinculoCategoriaUsuarioResponseDto;
+import com.raissa.payments.domain.entity.administrativo.UsuarioEntity;
+import com.raissa.payments.domain.mappers.administrativo.UsuarioMapper;
+import com.raissa.payments.domain.repository.administrativo.UsuarioRepository;
 import com.raissa.payments.exception.commons.ResponseApiException;
 import com.raissa.payments.service.administrativo.general.ClienteDataSourceService;
 import com.raissa.payments.service.operativo.administrativo.AdministrativoService;
@@ -53,6 +63,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdministrativoServiceImpl extends AbstractRaissaPaymentsService implements AdministrativoService {
     private final ClienteDataSourceService clienteDataSourceService;
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
 
     private final RestTemplate restTemplate;
 
@@ -447,6 +459,103 @@ public class AdministrativoServiceImpl extends AbstractRaissaPaymentsService imp
         return response.getBody();
     }
 
+    public VinculoCategoriaUsuarioResponseDto listVinculoCategoriaUsuario(VinculoCategoriaUsuarioRequestDto req) {
+        VinculoCategoriaUsuarioResponseDto response = new VinculoCategoriaUsuarioResponseDto();
+        VinculoCategoriaUsuarioConnectResponseDto vinculo = obtenerVinculoCategoriaUsuario(req);
+
+        response.setIdCategoria(vinculo.getIdCategoria());
+
+        List<UsuarioEntity> usuariosVinculados = usuarioRepository.findByUsernameInAndEstadoRegistro(vinculo.getUsuariosVinculados(),
+                Constante.ESTADO_ACTIVO);
+
+        List<UsuarioResponseDto> usuariosVinculadosDto =
+                usuariosVinculados.stream()
+                        .map(usuarioMapper::entityToResponseDto)
+                        .toList();
+
+        List<UsuarioEntity> usuariosDisponibles =  usuarioRepository.findByUsuariosDisponibles(vinculo.getUsuariosVinculados(),
+                req.getCodigoCliente(),
+                Constante.ESTADO_ACTIVO);
+
+        List<UsuarioResponseDto> usuariosDisponiblesDto =
+                usuariosDisponibles.stream()
+                        .map(usuarioMapper::entityToResponseDto)
+                        .toList();
+
+        response.setUsuariosVinculados(usuariosVinculadosDto);
+        response.setUsuariosDisponibles(usuariosDisponiblesDto);
+
+        return response;
+    }
+
+    public Boolean vincularCategoriaUsuario(CategoriaUsuarioRequestDto req,
+                                            HttpServletRequest request) {
+        String url = UriComponentsBuilder.fromUriString(urlConectorServer + "/categorias/vincular-categoria-usuario").toUriString();
+
+        ClienteDataSourceResponseDto clienteDataSource = clienteDataSourceService.getDataSource(req.getCodigoCliente());
+
+        CategoriaUsuarioConnectRequestDto connect = new CategoriaUsuarioConnectRequestDto();
+        connect.setIdCategoria(req.getIdCategoria());
+        connect.setUsernames(req.getUsernames());
+        connect.setUsuarioAuditoria(getCurrentUser());
+        connect.setFechaAuditoria(LocalDateTime.now());
+        connect.setTerminalAuditoria(request.getRemoteHost());
+        connect.setIpAuditoria(request.getRemoteAddr());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constante.PARAM_HEADER_EMPRESA, clienteDataSource.getCodigoDataSource());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<CategoriaUsuarioConnectRequestDto> requestEntity = new HttpEntity<>(connect, headers);
+
+        ResponseEntity<Boolean> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseApiException("Error al llamar al API para vincular categoria usuario");
+        }
+
+        return response.getBody();
+    }
+
+    public Boolean desvincularCategoriaUsuario(CategoriaUsuarioRequestDto req,
+                                               HttpServletRequest request) {
+        String url = UriComponentsBuilder.fromUriString(urlConectorServer + "/categorias/desvincular-categoria-usuario").toUriString();
+
+        ClienteDataSourceResponseDto clienteDataSource = clienteDataSourceService.getDataSource(req.getCodigoCliente());
+
+        CategoriaUsuarioConnectRequestDto connect = new CategoriaUsuarioConnectRequestDto();
+        connect.setIdCategoria(req.getIdCategoria());
+        connect.setUsernames(req.getUsernames());
+        connect.setUsuarioAuditoria(getCurrentUser());
+        connect.setFechaAuditoria(LocalDateTime.now());
+        connect.setTerminalAuditoria(request.getRemoteHost());
+        connect.setIpAuditoria(request.getRemoteAddr());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constante.PARAM_HEADER_EMPRESA, clienteDataSource.getCodigoDataSource());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<CategoriaUsuarioConnectRequestDto> requestEntity = new HttpEntity<>(connect, headers);
+
+        ResponseEntity<Boolean> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseApiException("Error al llamar al API para vincular categoria usuario");
+        }
+
+        return response.getBody();
+    }
+
     public ReglaConnectResponseDto listarReglaPage(ReglaSearchDto search) {
         ReglaSearchConnectDto searchConnect = new ReglaSearchConnectDto();
         searchConnect.setDescripcion(search.getDescripcion());
@@ -822,6 +931,34 @@ public class AdministrativoServiceImpl extends AbstractRaissaPaymentsService imp
 
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
             throw new ResponseApiException("Error al llamar al API para eliminar configuración regla");
+        }
+
+        return response.getBody();
+    }
+
+    private VinculoCategoriaUsuarioConnectResponseDto obtenerVinculoCategoriaUsuario(VinculoCategoriaUsuarioRequestDto req) {
+        String url = UriComponentsBuilder.fromUriString(urlConectorServer + "/categorias/list-vinculo-categoria-usuario").toUriString();
+
+        ClienteDataSourceResponseDto clienteDataSource = clienteDataSourceService.getDataSource(req.getCodigoCliente());
+
+        VinculoCategoriaUsuarioConnectRequestDto connect = new VinculoCategoriaUsuarioConnectRequestDto();
+        connect.setIdCategoria(req.getIdCategoria());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constante.PARAM_HEADER_EMPRESA, clienteDataSource.getCodigoDataSource());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<VinculoCategoriaUsuarioConnectRequestDto> requestEntity = new HttpEntity<>(connect, headers);
+
+        ResponseEntity<VinculoCategoriaUsuarioConnectResponseDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseApiException("Error al llamar al API para obtener una categoria");
         }
 
         return response.getBody();

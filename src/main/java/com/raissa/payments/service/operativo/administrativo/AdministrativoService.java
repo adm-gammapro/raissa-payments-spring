@@ -2,12 +2,14 @@ package com.raissa.payments.service.operativo.administrativo;
 
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaSearchDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.CategoriaUsuarioRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ConfiguracionReglaRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ConfiguracionReglaSearchDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ReglaRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.ReglaSearchDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.request.TipoPagoSearchDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.request.VinculoCategoriaUsuarioRequestDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.CategoriaConnectResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.CategoriaResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.ConfiguracionReglaConnectResponseDto;
@@ -16,6 +18,7 @@ import com.raissa.payments.domain.dto.operativo.administrativo.response.ReglaCon
 import com.raissa.payments.domain.dto.operativo.administrativo.response.ReglaResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.TipoPagoConnectResponseDto;
 import com.raissa.payments.domain.dto.operativo.administrativo.response.TipoPagoResponseDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.response.VinculoCategoriaUsuarioResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
@@ -100,6 +103,14 @@ public interface AdministrativoService {
                                          HttpServletRequest request);
 
     List<CategoriaResponseDto> listCategoria(CategoriaRequestDto get);
+
+    VinculoCategoriaUsuarioResponseDto listVinculoCategoriaUsuario(VinculoCategoriaUsuarioRequestDto req);
+
+    Boolean vincularCategoriaUsuario(CategoriaUsuarioRequestDto req,
+                                     HttpServletRequest request);
+
+    Boolean desvincularCategoriaUsuario(CategoriaUsuarioRequestDto req,
+                                        HttpServletRequest request);
 
     /**
      * Lista paginada de reglas

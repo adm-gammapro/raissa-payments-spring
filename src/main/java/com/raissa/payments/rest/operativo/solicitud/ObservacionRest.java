@@ -1,8 +1,9 @@
 package com.raissa.payments.rest.operativo.solicitud;
 
-import com.raissa.payments.domain.dto.operativo.solicitud.request.TrackingRequestDto;
-import com.raissa.payments.domain.dto.operativo.solicitud.response.TrackingResponseDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.response.ObservacionResponseDto;
 import com.raissa.payments.service.operativo.solicitud.SolicitudService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class ObservacionRest {
     private final SolicitudService solicitudService;
 
     @PostMapping("/list-observacion")
-    public ResponseEntity<List<TrackingResponseDto>> listarSolicitudesPage(@RequestBody TrackingRequestDto search) {
-        return ResponseEntity.ok(solicitudService.listTracking(search));
+    public ResponseEntity<List<ObservacionResponseDto>> listarObservaciones(@RequestBody ObservacionRequestDto search) {
+        return ResponseEntity.ok(solicitudService.listObservacion(search));
     }
 }

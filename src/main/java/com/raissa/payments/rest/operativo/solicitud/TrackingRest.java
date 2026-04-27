@@ -20,7 +20,7 @@ public class TrackingRest {
     private final SolicitudService solicitudService;
 
     @PostMapping("/list-tracking")
-    public ResponseEntity<List<TrackingResponseDto>> listarSolicitudesPage(@RequestBody TrackingRequestDto search) {
+    public ResponseEntity<List<TrackingResponseDto>> listarTracking(@RequestBody TrackingRequestDto search) {
         return ResponseEntity.ok(solicitudService.listTracking(search));
     }
 }

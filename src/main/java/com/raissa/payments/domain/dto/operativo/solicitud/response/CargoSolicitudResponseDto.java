@@ -12,6 +12,7 @@ public class CargoSolicitudResponseDto {
     private Long solicitudId;
     private String cuentaOrigen;
     private String codigoEntidadFinanciera;
+    private String nombreEntidadFinanciera;
     private String moneda;
     private BigDecimal montoCargo;
     private BigDecimal montoTotalAbonos;

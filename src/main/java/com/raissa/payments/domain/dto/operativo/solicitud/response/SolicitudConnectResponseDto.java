@@ -6,15 +6,14 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SolicitudResponseDto {
+public class SolicitudConnectResponseDto {
     private Long id;
     private String fechaCarga;
     private String usuarioCarga;
-    private String nombreUsuarioCarga;
     private Integer cantidadOrdenes;
     private String estadoSolicitud;
-    private String nombresUsuariosAutorizacion;
-    private List<CargoSolicitudResponseDto> cargos;
+    private List<String> usuariosAutorizacion;
+    private List<CargoSolicitudConnectResponseDto> cargos;
 
     private EstadoRegistroEnum estadoRegistro;
     private String audiFechIns;

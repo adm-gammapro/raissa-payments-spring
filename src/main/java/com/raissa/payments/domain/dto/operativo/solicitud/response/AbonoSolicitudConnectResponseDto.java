@@ -6,12 +6,11 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class AbonoSolicitudResponseDto {
+public class AbonoSolicitudConnectResponseDto {
     private Long id;
     private Long cargoSolicitudId;
     private String cuentaDestino;
     private String codigoEntidadFinanciera;
-    private String nombreEntidadFinanciera;
     private String moneda;
     private BigDecimal montoDestino;
     private String beneficiario;

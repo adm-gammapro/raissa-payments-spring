@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,5 +27,12 @@ public class GeneralRest {
     @GetMapping("/list-institucion-financiera")
     public ResponseEntity<List<InstitucionFinancieraResponseDto>> listarInstitucionFinancieraEmpresa() {
         return ResponseEntity.ok(generalService.listarInstitucionFinanciera());
+    }
+
+    @GetMapping("/obtener-codigo-random")
+    public ResponseEntity<String> obtenerCodigoRandom(@RequestParam String username,
+                                                      @RequestParam String passwordPlano,
+                                                      @RequestParam String modoEnvio) {
+        return ResponseEntity.ok(generalService.obtenerCodigoRandom(username, passwordPlano, modoEnvio));
     }
 }

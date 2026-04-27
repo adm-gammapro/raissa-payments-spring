@@ -4,21 +4,20 @@ import com.raissa.comun.enums.commons.EstadoRegistroEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
-public class AbonoSolicitudResponseDto {
+public class CargoSolicitudConnectResponseDto {
     private Long id;
-    private Long cargoSolicitudId;
-    private String cuentaDestino;
+    private Long solicitudId;
+    private String cuentaOrigen;
     private String codigoEntidadFinanciera;
-    private String nombreEntidadFinanciera;
     private String moneda;
-    private BigDecimal montoDestino;
-    private String beneficiario;
-    private String ndocBeneficiarioValidado;
-    private String nombreBeneficiarioValidado;
+    private BigDecimal montoCargo;
+    private BigDecimal montoTotalAbonos;
+    private String estadoValidacion;
     private String estadoEjecucion;
-    private String detalleEjecucion;
+    private List<AbonoSolicitudConnectResponseDto> abonos;
 
     private EstadoRegistroEnum estadoRegistro;
     private String audiFechIns;

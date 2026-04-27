@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ObservacionConnectRequestDto extends FlujoSolicitudConnectRequestDto {
+public class ObservacionFlujoSolicitudRequestDto extends FlujoSolicitudRequestDto {
     private String descripcionObservacion;
 
     private String eventoObservacion;
