@@ -1,10 +1,12 @@
 package com.raissa.payments.service.operativo.solicitud;
 
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.LiquidacionSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionFlujoSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.SolicitudSearchDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.TrackingRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.response.LiquidacionSolicitudResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.ObservacionResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.SolicitudSearchResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.TrackingResponseDto;
@@ -22,4 +24,6 @@ public interface SolicitudService {
     Long flujoSolicitudObservacion(ObservacionFlujoSolicitudRequestDto dto, HttpServletRequest request);
 
     List<ObservacionResponseDto> listObservacion(ObservacionRequestDto dto);
+
+    LiquidacionSolicitudResponseDto getResumenLiquidacion(LiquidacionSolicitudRequestDto req);
 }

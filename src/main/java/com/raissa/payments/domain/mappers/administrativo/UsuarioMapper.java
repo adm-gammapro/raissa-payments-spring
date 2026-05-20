@@ -71,6 +71,14 @@ public abstract class UsuarioMapper extends EntityMapper<UsuarioEntity, Long> {
     @Mapping(target = "disabled", ignore = true)
     @Mapping(target = "estadoRegistro", ignore = true)
     @Mapping(target = "username", ignore = true)
+    @Mapping(target = "audiFechIns", ignore = true)
+    @Mapping(target = "audiUsuario", ignore = true)
+    @Mapping(target = "audiNomTerminal", ignore = true)
+    @Mapping(target = "audiIp", ignore = true)
+    @Mapping(target = "audiFechaMod", ignore = true)
+    @Mapping(target = "audiUsuMod", ignore = true)
+    @Mapping(target = "audiNomTerminalMod", ignore = true)
+    @Mapping(target = "audiIpMod", ignore = true)
     public abstract void update(@MappingTarget UsuarioEntity entity, UsuarioRequestDto dto);
 
     @AfterMapping

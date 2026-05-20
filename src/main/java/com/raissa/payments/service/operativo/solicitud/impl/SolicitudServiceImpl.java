@@ -6,6 +6,8 @@ import com.raissa.payments.domain.dto.commons.ClienteDataSourceResponseDto;
 import com.raissa.payments.domain.dto.commons.InstitucionFinancieraDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudConnectRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.LiquidacionSolicitudConnectRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.LiquidacionSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionConnectRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionFlujoSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionRequestDto;
@@ -15,6 +17,7 @@ import com.raissa.payments.domain.dto.operativo.solicitud.request.TrackingConnec
 import com.raissa.payments.domain.dto.operativo.solicitud.request.TrackingRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.AbonoSolicitudResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.CargoSolicitudResponseDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.response.LiquidacionSolicitudResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.ObservacionResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.SolicitudConnectResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.SolicitudResponseDto;
@@ -44,9 +47,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -86,9 +92,8 @@ public class SolicitudServiceImpl extends AbstractRaissaPaymentsService implemen
         }
 
         List<SolicitudConnectResponseDto> content = response.getBody().getContent()
-                .stream()
-                .toList();
-
+                    .stream()
+                    .toList();
         return new SolicitudSearchResponseDto(response.getBody().getTotalPages(),
                 response.getBody().getTotalElements(),
                 response.getBody().getNumber(),
@@ -169,7 +174,7 @@ public class SolicitudServiceImpl extends AbstractRaissaPaymentsService implemen
             throw new ResponseApiException("Error al llamar al API para obtener página de solicitudes");
         }
 
-        return response.getBody();
+        return completarDatosTrack(response.getBody());
     }
 
     public Long flujoSolicitudObservacion(ObservacionFlujoSolicitudRequestDto dto, HttpServletRequest request) {
@@ -224,6 +229,34 @@ public class SolicitudServiceImpl extends AbstractRaissaPaymentsService implemen
         HttpEntity<ObservacionConnectRequestDto> requestEntity = new HttpEntity<>(requestConnect, headers);
 
         ResponseEntity<List<ObservacionResponseDto>> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ResponseApiException("Error al llamar al API para obtener página de solicitudes");
+        }
+
+        return response.getBody();
+    }
+
+    public LiquidacionSolicitudResponseDto getResumenLiquidacion(LiquidacionSolicitudRequestDto req) {
+        LiquidacionSolicitudConnectRequestDto connect = new LiquidacionSolicitudConnectRequestDto();
+        connect.setSolicitudId(req.getSolicitudId());
+
+        String url = UriComponentsBuilder.fromUriString(urlConectorServer + "/flujo-solicitud/resumen-liquidacion").toUriString();
+
+        ClienteDataSourceResponseDto clienteDataSource = clienteDataSourceService.getDataSource(req.getCodigoCliente());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(Constante.PARAM_HEADER_EMPRESA, clienteDataSource.getCodigoDataSource());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<LiquidacionSolicitudConnectRequestDto> requestEntity = new HttpEntity<>(connect, headers);
+
+        ResponseEntity<LiquidacionSolicitudResponseDto> response = restTemplate.exchange(
                 url,
                 HttpMethod.POST,
                 requestEntity,
@@ -322,5 +355,43 @@ public class SolicitudServiceImpl extends AbstractRaissaPaymentsService implemen
         searchConnect.setSortOrder(search.getSortOrder());
         searchConnect.setPage(search.getPage());
         return searchConnect;
+    }
+
+    private List<TrackingResponseDto> completarDatosTrack(List<TrackingResponseDto> trackings){
+        if (trackings == null || trackings.isEmpty()) {
+            return new ArrayList<>();
+        }
+        // Extraer todos los nombres de usuario únicos de los trackings
+        List<String> usernames = trackings.stream()
+                .map(TrackingResponseDto::getUsuario)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        if (usernames.isEmpty()) {
+            return trackings;
+        }
+
+        // Buscar todos los usuarios activos por sus usernames
+        List<UsuarioEntity> usuarios = usuarioRepository.findByUsernameInAndEstadoRegistro(
+                usernames,
+                Constante.ESTADO_ACTIVO
+        );
+
+        // Crear un mapa para búsqueda rápida username -> nombre de usuario
+        Map<String, String> nombreUsuarioMap = usuarios.stream()
+                .collect(Collectors.toMap(
+                        UsuarioEntity::getUsername,
+                        usuario -> formatearNombre(usuario.getNombres(), usuario.getApePaterno()),
+                        (existing, replacement) -> existing
+                ));
+
+        // Completar el nombreUsuario en cada tracking
+        trackings.forEach(tracking -> {
+            String nombreCompleto = nombreUsuarioMap.get(tracking.getUsuario());
+            tracking.setNombreUsuario(nombreCompleto != null ? nombreCompleto : tracking.getUsuario());
+        });
+
+        return trackings;
     }
 }

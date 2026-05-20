@@ -4,9 +4,7 @@ import com.raissa.comun.util.Constante;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.CargaSolicitudJsonRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.CargaSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.LineaCargaRequestDto;
-import com.raissa.payments.domain.dto.operativo.solicitud.request.TrackingRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.CargaSolicitudResponseDto;
-import com.raissa.payments.domain.dto.operativo.solicitud.response.TrackingResponseDto;
 import com.raissa.payments.service.operativo.solicitud.CargaSolicitudService;
 import com.raissa.payments.service.operativo.solicitud.CargarSolicitudConectorService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -102,14 +100,22 @@ public class CargaSolicitudServiceImpl implements CargaSolicitudService {
                 String codEnt = getString(row, 2);
                 String moneda = getString(row, 3);
                 BigDecimal monto = getNumeric(row, 4);
+                String tipoDocBeneficiario = "";
+                String nroDocBeneficiario = "";
                 String beneficiario = "";
                 String mismoTitular = "";
 
                 if ("D".equalsIgnoreCase(tipo)) {
-                    beneficiario = getString(row, 5);
+                    tipoDocBeneficiario = getString(row, 5);
                 }
                 if ("D".equalsIgnoreCase(tipo)) {
-                    mismoTitular = getString(row, 6);
+                    nroDocBeneficiario = getString(row, 6);
+                }
+                if ("D".equalsIgnoreCase(tipo)) {
+                    beneficiario = getString(row, 7);
+                }
+                if ("D".equalsIgnoreCase(tipo)) {
+                    mismoTitular = getString(row, 8);
                 }
 
                 if (!"H".equalsIgnoreCase(tipo) && !"D".equalsIgnoreCase(tipo)) {
@@ -123,6 +129,8 @@ public class CargaSolicitudServiceImpl implements CargaSolicitudService {
                 l.setMoneda(moneda);
                 l.setMonto(monto);
                 l.setBeneficiario(beneficiario);
+                l.setTipoDocBeneficiario(tipoDocBeneficiario);
+                l.setNroDocBeneficiario(nroDocBeneficiario);
                 l.setMismoTitular(mismoTitular);
                 lineas.add(l);
             }

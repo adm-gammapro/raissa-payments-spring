@@ -25,7 +25,8 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "seguridad_usuario_cliente", schema = "public")
 public class UsuarioClienteEntity extends Auditoria {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_cliente_generator")
+    @SequenceGenerator(name = "usuario_cliente_generator", sequenceName = "public.seguridad_usuario_cliente_n_coddet_seq", allocationSize = 1)
     @Column(name = "n_coddet")
     private Long codigo;
 

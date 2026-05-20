@@ -14,12 +14,13 @@ public interface OpcionRepository extends JpaRepository<OpcionEntity, Long> {
             SELECT DISTINCT menu
             FROM OpcionEntity menu
               JOIN OpcionPerfilEntity opcper ON opcper.opcion = menu
-              JOIN UsuarioClienteEntity usucli ON usucli.cliente.codigo = :idEmpresa
-              JOIN UsuarioEntity usuario ON usuario = usucli.usuario
-              JOIN PerfilSistemaEntity ps ON ps.perfil = opcper.perfil AND ps.sistema.id = :codigoSistema
-              JOIN UsuarioPerfilEntity up ON up.usuario = usuario AND up.perfil = ps.perfil
-            WHERE usuario.username = :usuario
-              AND menu.estadoRegistro = 'S'
+              AND opcper.estadoRegistro = 'S'
+              JOIN ConfiguracionUsuarioEntity config ON config.cliente.codigo = :idEmpresa
+              AND config.usuario.username = :usuario
+              AND config.sistema.id = :codigoSistema
+              AND config.perfil = opcper.perfil
+              AND config.estadoRegistro = 'S'
+            WHERE menu.estadoRegistro = 'S'
               AND menu.opcionPadre IS NULL
             ORDER BY menu.modulo.codigo, menu.numeroOrden
             """)
@@ -31,16 +32,30 @@ public interface OpcionRepository extends JpaRepository<OpcionEntity, Long> {
             SELECT DISTINCT menu
             FROM OpcionEntity menu
               JOIN OpcionPerfilEntity opcper ON opcper.opcion = menu
-              JOIN UsuarioClienteEntity usucli ON usucli.cliente.codigo = :idEmpresa
-              JOIN UsuarioEntity usuario ON usuario = usucli.usuario
-              JOIN PerfilSistemaEntity ps ON ps.perfil = opcper.perfil AND ps.sistema.id = :codigoSistema
-              JOIN UsuarioPerfilEntity up ON up.usuario = usuario AND up.perfil = ps.perfil
-            WHERE usuario.username = :usuario
-              AND menu.estadoRegistro = 'S'
+              AND opcper.estadoRegistro = 'S'
+              JOIN ConfiguracionUsuarioEntity config ON config.cliente.codigo = :idEmpresa
+              AND config.usuario.username = :usuario
+              AND config.sistema.id = :codigoSistema
+              AND config.perfil = opcper.perfil
+              AND config.estadoRegistro = 'S'
+            WHERE menu.estadoRegistro = 'S'
               AND menu.opcionPadre IS NOT NULL
             ORDER BY menu.modulo.codigo, menu.opcionPadre, menu.numeroOrden
             """)
     List<OpcionEntity> listMenuBase(@Param("usuario") String usuario,
                                     @Param("idEmpresa") Long idEmpresa,
                                     @Param("codigoSistema") String codigoSistema);
+
+    @Query("SELECT o FROM OpcionEntity o " +
+            "WHERE o.seleccionable = 'S' " +
+            "AND o.estadoRegistro = :estadoRegistro " +
+            "AND EXISTS (SELECT os FROM OpcionSistemaEntity os " +
+            "            WHERE os.opcionMenu = o.codigo " +
+            "            AND os.sistema.id = :sistemaId " +
+            "            AND os.estadoRegistro = :estadoRegistro) " +
+            "ORDER BY o.numeroOrden ASC")
+    List<OpcionEntity> findOpcionesBySistemaAndSeleccionable(@Param("sistemaId") String sistemaId,
+                                                             @Param("estadoRegistro") String estadoRegistro);
+
+    List<OpcionEntity> findByCodigoInAndEstadoRegistro(List<Long> ids, String estadoRegistro);
 }

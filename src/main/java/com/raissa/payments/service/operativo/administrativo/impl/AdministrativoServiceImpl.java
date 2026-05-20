@@ -37,6 +37,7 @@ import com.raissa.payments.domain.dto.operativo.administrativo.response.VinculoC
 import com.raissa.payments.domain.entity.administrativo.UsuarioEntity;
 import com.raissa.payments.domain.mappers.administrativo.UsuarioMapper;
 import com.raissa.payments.domain.repository.administrativo.UsuarioRepository;
+import com.raissa.payments.exception.commons.BusinessException;
 import com.raissa.payments.exception.commons.ResponseApiException;
 import com.raissa.payments.service.administrativo.general.ClienteDataSourceService;
 import com.raissa.payments.service.operativo.administrativo.AdministrativoService;
@@ -463,7 +464,11 @@ public class AdministrativoServiceImpl extends AbstractRaissaPaymentsService imp
         VinculoCategoriaUsuarioResponseDto response = new VinculoCategoriaUsuarioResponseDto();
         VinculoCategoriaUsuarioConnectResponseDto vinculo = obtenerVinculoCategoriaUsuario(req);
 
-        response.setIdCategoria(vinculo.getIdCategoria());
+        if(vinculo != null) {
+            response.setIdCategoria(vinculo.getIdCategoria());
+        } else {
+            throw new BusinessException("ID Categoria no disponible");
+        }
 
         List<UsuarioEntity> usuariosVinculados = usuarioRepository.findByUsernameInAndEstadoRegistro(vinculo.getUsuariosVinculados(),
                 Constante.ESTADO_ACTIVO);

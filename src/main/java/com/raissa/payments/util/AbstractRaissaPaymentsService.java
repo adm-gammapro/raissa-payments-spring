@@ -1,11 +1,16 @@
 package com.raissa.payments.util;
 
 import com.raissa.comun.enums.commons.EstadoRegistroEnum;
+import com.raissa.comun.enums.commons.SortOrderEnum;
+import com.raissa.comun.general.dto.SearchRequestDTO;
 import com.raissa.comun.general.entity.Auditoria;
 import com.raissa.comun.general.service.AbstractService;
 import com.raissa.comun.util.StringUtil;
 import com.raissa.payments.exception.commons.InvalidEstadoException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -73,5 +78,17 @@ public class AbstractRaissaPaymentsService extends AbstractService {
 
         String inicial = nombres.substring(0, 1).toUpperCase();
         return inicial + ". " + apellido;
+    }
+
+    public static Pageable buildPageable(SearchRequestDTO searchDto) {
+        int page = Math.max(0, searchDto.getPage());
+        int size = searchDto.getSize() > 0 ? searchDto.getSize() : 5;
+        String sortField = searchDto.getSortField() != null && !searchDto.getSortField().isBlank() ? searchDto.getSortField() : "id";
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (searchDto.getSortOrder() != null) {
+            direction = searchDto.getSortOrder() == SortOrderEnum.ASCENDENTE ? Sort.Direction.ASC : Sort.Direction.DESC;
+        }
+
+        return PageRequest.of(page, size, Sort.by(direction, new String[]{sortField}));
     }
 }

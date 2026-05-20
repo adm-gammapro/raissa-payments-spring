@@ -27,13 +27,23 @@ public class ResourceServerConfig {
     private String issuerUri;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults());
         http.authorizeHttpRequests(auth -> auth
+
+                // Swagger
+                .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs.yaml"
+                ).permitAll()
+
+                // resto
                 .anyRequest().authenticated()
         );
         http.oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri)))
+                .jwt(jwt -> jwt.decoder(jwtDecoder()))
         );
 
         return http.build();

@@ -1,8 +1,10 @@
 package com.raissa.payments.rest.operativo.solicitud;
 
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudRequestDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.request.LiquidacionSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionFlujoSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.SolicitudSearchDto;
+import com.raissa.payments.domain.dto.operativo.solicitud.response.LiquidacionSolicitudResponseDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.SolicitudSearchResponseDto;
 import com.raissa.payments.service.operativo.solicitud.SolicitudService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,5 +42,10 @@ public class SolicitudRest {
     public ResponseEntity<Long> trackingSolicitudes(@RequestBody FlujoSolicitudRequestDto flujo,
                                                    HttpServletRequest request) {
         return ResponseEntity.ok(solicitudService.flujoSolicitud(flujo, request));
+    }
+
+    @PostMapping("/resumen-liquidacion")
+    public ResponseEntity<LiquidacionSolicitudResponseDto> gerResumenLiquidacion(@RequestBody LiquidacionSolicitudRequestDto req) {
+        return ResponseEntity.ok(solicitudService.getResumenLiquidacion(req));
     }
 }

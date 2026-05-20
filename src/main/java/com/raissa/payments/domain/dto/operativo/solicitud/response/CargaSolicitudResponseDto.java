@@ -1,14 +1,17 @@
 package com.raissa.payments.domain.dto.operativo.solicitud.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.util.List;
+
+@Getter
+@Setter
 @AllArgsConstructor
 public class CargaSolicitudResponseDto {
-    Long solicitudId;
-    int cargosCreados;
-    int abonosCreados;
-    int observacionesRegistradas;
-    String estadoSolicitud;
+    private List<Long> idsSolicitudes;
+    private int totalCargos;
+    private int totalAbonos;
+    private int totalObservaciones;
 }

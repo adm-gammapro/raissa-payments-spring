@@ -1,10 +1,12 @@
 package com.raissa.payments.domain.dto.operativo.solicitud.request;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 public class LineaCargaRequestDto {
     String tipo;
     String cuenta;
@@ -12,5 +14,7 @@ public class LineaCargaRequestDto {
     String moneda;
     BigDecimal monto;
     String beneficiario;
+    String tipoDocBeneficiario;
+    String nroDocBeneficiario;
     String mismoTitular;
 }
