@@ -1,6 +1,5 @@
 package com.raissa.payments.rest.administrativo.perfil;
 
-import com.raissa.comun.util.Constante;
 import com.raissa.payments.domain.dto.administrativo.request.PerfilRequestDto;
 import com.raissa.payments.domain.dto.administrativo.request.PerfilSearchDto;
 import com.raissa.payments.domain.dto.administrativo.response.PerfilResponseDto;
@@ -9,10 +8,6 @@ import com.raissa.payments.service.administrativo.perfil.PerfilService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

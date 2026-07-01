@@ -31,7 +31,7 @@ public abstract class PerfilMapper extends EntityMapper<PerfilEntity, Long> {
      * @param entity datos de la entidad
      * @return {@link PerfilResponseDto}
      */
-    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "mapLocalDateToString")
+    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "mapLocalDateToStringInternacional")
     @Mapping(target = "audiFechIns", source = "audiFechIns", qualifiedByName = "mapLocalDateTimeToString")
     @Mapping(target = "estadoRegistro", source = "estadoRegistro", qualifiedByName = "mapStringToEstadoRegistroEnum")
     public abstract PerfilResponseDto entityToResponseDto(PerfilEntity entity);
@@ -43,7 +43,7 @@ public abstract class PerfilMapper extends EntityMapper<PerfilEntity, Long> {
      * @return {@link PerfilEntity}
      */
     @Mapping(target = "codigo", ignore = true)
-    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "emptyToNull")
+    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "mapStringToLocalDateInternacional")
     public abstract PerfilEntity dtoToEntity(PerfilRequestDto dto);
 
     /**
@@ -53,7 +53,7 @@ public abstract class PerfilMapper extends EntityMapper<PerfilEntity, Long> {
      * @param dto {@link PerfilRequestDto} con los datos a actualizar
      */
     @Mapping(target = "codigo", ignore = true)
-    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "emptyToNull")
+    @Mapping(target = "fechaCaducidad", source = "fechaCaducidad", qualifiedByName = "mapStringToLocalDateInternacional")
     @Mapping(target = "estadoRegistro", ignore = true)
     @Mapping(target = "audiFechIns", ignore = true)
     @Mapping(target = "audiUsuario", ignore = true)

@@ -7,7 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class PerfilSearchDto extends SearchRequestDTO {
-    private String estadoRegistro;
-    private String  nombrePerfil;
+    private String descripcion;
+    private String abreviatura;
+    private String  estadoRegistro;
     private Long codigoCliente;
 }

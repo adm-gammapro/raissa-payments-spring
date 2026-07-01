@@ -16,4 +16,5 @@ public class SolicitudSearchDto extends SearchRequestDTO {
     private List<String> estadoSolicitud;
     private Long codigoCliente;
     private String usuarioActual;
+    private String proceso;//'cargar' 'gestionar' | 'validar' | 'autorizar' | 'ejecutar';
 }

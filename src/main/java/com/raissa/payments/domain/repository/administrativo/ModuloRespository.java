@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ModuloRespository extends JpaRepository<ModuloEntity, Long> {
+
     @Query("""
             SELECT DISTINCT m
             FROM ModuloEntity m
@@ -18,14 +19,18 @@ public interface ModuloRespository extends JpaRepository<ModuloEntity, Long> {
                 FROM OpcionEntity o
                     JOIN o.modulo mod2
                     JOIN OpcionPerfilEntity op ON op.opcion = o
-                    JOIN UsuarioClienteEntity uc ON uc.perfil = op.perfil AND uc.cliente.codigo = :idEmpresa
-                    JOIN uc.usuario u
-                WHERE u.username = :usuario
-                  AND o.estadoRegistro = 'S'
+                    AND o.estadoRegistro = 'S'
+                    JOIN ConfiguracionUsuarioEntity config ON config.cliente.codigo = :idEmpresa
+                    AND config.usuario.username = :usuario
+                    AND config.sistema.id = :codigoSistema
+                    AND config.perfil = op.perfil
+                    AND config.estadoRegistro = 'S'
+                WHERE o.estadoRegistro = 'S'
                   AND o.opcionPadre IS NOT NULL
                   AND mod2 = m
             )
             """)
     List<ModuloEntity> listModulos(@Param("usuario") String usuario,
-                                   @Param("idEmpresa") Long idEmpresa);
+                                   @Param("idEmpresa") Long idEmpresa,
+                                   @Param("codigoSistema") String codigoSistema);
 }

@@ -1,5 +1,6 @@
 package com.raissa.payments.domain.repository.administrativo;
 
+import com.raissa.payments.domain.entity.administrativo.SistemaEntity;
 import com.raissa.payments.domain.entity.administrativo.UsuarioSistemaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,4 +24,11 @@ public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistemaEn
             "WHERE us.usuario.id = :usuarioId AND us.sistema.id IN :sistemasIds AND us.estadoRegistro = 'S'")
     int desasignarSistemas(@Param("usuarioId") Long usuarioId,
                            @Param("sistemasIds") List<String> sistemasIds);
+
+    @Query("SELECT us.sistema FROM UsuarioSistemaEntity us " +
+            "WHERE us.usuario.id = :usuarioId " +
+            "AND us.estadoRegistro = :estadoRegistro " +
+            "ORDER BY us.sistema.nombre ASC")
+    List<SistemaEntity> findSistemasByUsuarioId(@Param("usuarioId") Long usuarioId,
+                                                @Param("estadoRegistro") String estadoRegistro);
 }

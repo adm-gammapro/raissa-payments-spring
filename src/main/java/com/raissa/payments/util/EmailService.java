@@ -1,6 +1,7 @@
 package com.raissa.payments.util;
 
 import com.raissa.comun.util.Constante;
+import com.raissa.payments.domain.dto.operativo.administrativo.response.ConstanciaPagoResponse;
 import com.raissa.payments.domain.entity.commons.GenericCatalogoEntity;
 import com.raissa.payments.domain.repository.commons.GenericCatalogoRepository;
 import jakarta.mail.MessagingException;
@@ -74,6 +75,32 @@ public class EmailService {
         } catch (MessagingException e) {
             log.error("Error al enviar correo a: {}", destino, e);
             throw new RuntimeException("Error al enviar correo de verificación", e);
+        }
+    }
+
+    public void enviarConstancia(String destino, ConstanciaPagoResponse constancia) {
+        try {
+            // 1. Obtener configuración del correo desde la tabla parámetros
+            ConfiguracionEmail config = cargarConfiguracionEmail(Constante.TABLA_EMAIL, Constante.CAMPO_CONSTANCIA_PAGO);
+
+            // 2. Construir el cuerpo del email con los datos de la constancia
+            String cuerpoEmail = construirCuerpoEmailConstancia(config.getHeader(), config.getFooter(), constancia);
+
+            // 3. Enviar correo con MimeMessage (soporta HTML)
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(config.getFrom());
+            helper.setTo(destino);
+            helper.setSubject(config.getSubject());
+            helper.setText(cuerpoEmail, true); // true = es HTML
+
+            mailSender.send(message);
+            log.info("Constancia de pago enviada exitosamente a: {}", destino);
+
+        } catch (MessagingException e) {
+            log.error("Error al enviar constancia de pago a: {}", destino, e);
+            throw new RuntimeException("Error al enviar constancia de pago", e);
         }
     }
 
@@ -166,6 +193,39 @@ public class EmailService {
                 .orElse(""));
 
         return config;
+    }
+
+    /**
+     * Construye el cuerpo del email con los datos de la constancia
+     */
+    private String construirCuerpoEmailConstancia(String header, String footer, ConstanciaPagoResponse constancia) {
+        String cuerpo = header;
+
+        // Reemplazar variables de la constancia
+        cuerpo = cuerpo.replace("{{codigo_operacion}}", nvl(constancia.getCodigoOperacion()));
+        cuerpo = cuerpo.replace("{{banco_origen}}", nvl(constancia.getBancoOrigen()));
+        cuerpo = cuerpo.replace("{{cuenta_origen}}", nvl(constancia.getCuentaOrigen()));
+        cuerpo = cuerpo.replace("{{destinatario}}", nvl(constancia.getDestinatario()));
+        cuerpo = cuerpo.replace("{{entidad_destino}}", nvl(constancia.getEntidadDestino()));
+        cuerpo = cuerpo.replace("{{destino}}", nvl(constancia.getDestino()));
+        cuerpo = cuerpo.replace("{{moneda}}", nvl(constancia.getMoneda()));
+        cuerpo = cuerpo.replace("{{monto}}", nvl(constancia.getMonto()));
+        cuerpo = cuerpo.replace("{{fecha}}", nvl(constancia.getFecha()));
+        cuerpo = cuerpo.replace("{{anio}}", String.valueOf(java.time.Year.now().getValue()));
+
+        if (footer != null && !footer.isEmpty()) {
+            footer = footer.replace("{{anio}}", String.valueOf(java.time.Year.now().getValue()));
+            cuerpo += footer;
+        }
+
+        return cuerpo;
+    }
+
+    /**
+     * Retorna el valor o string vacío si es null
+     */
+    private String nvl(String value) {
+        return value != null ? value : "";
     }
 
     /**

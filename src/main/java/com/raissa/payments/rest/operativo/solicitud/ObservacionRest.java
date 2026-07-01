@@ -3,7 +3,6 @@ package com.raissa.payments.rest.operativo.solicitud;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.response.ObservacionResponseDto;
 import com.raissa.payments.service.operativo.solicitud.SolicitudService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

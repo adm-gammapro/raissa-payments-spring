@@ -41,4 +41,18 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
                                         @Param("username") String username,
                                         @Param("userCurrent") Long userCurrent,
                                         Pageable pageable);
+
+    @Query("""
+            SELECT u.username
+            FROM UsuarioEntity u
+            JOIN UsuarioClienteEntity uc ON uc.usuario = u
+            JOIN UsuarioSistemaEntity us ON us.usuario = u AND us.sistema.id = '002'
+            WHERE uc.estadoRegistro = 'S'
+              AND us.estadoRegistro = 'S'
+              AND u.estadoRegistro = 'S'
+              AND uc.cliente.codigo = :idEmpresa
+              AND (:searchTerm IS NULL OR :searchTerm = '' OR
+                  LOWER(u.nombreCompletoBusqueda) LIKE LOWER(CONCAT('%', :searchTerm, '%')))
+            """)
+    List<String> findUsersForNames(String searchTerm, Long idEmpresa);
 }

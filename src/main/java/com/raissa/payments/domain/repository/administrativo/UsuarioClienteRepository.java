@@ -36,4 +36,11 @@ public interface UsuarioClienteRepository extends JpaRepository<UsuarioClienteEn
             "ORDER BY uc.cliente.razonSocial ASC")
     List<ClienteEntity> findClientesByUsuarioIdAndEstadoRegistro(@Param("usuarioId") Long usuarioId,
                                                                  @Param("estadoRegistro") String estadoRegistro);
+
+    @Query("SELECT uc.cliente FROM UsuarioClienteEntity uc " +
+            "WHERE uc.usuario.id = :usuarioId " +
+            "AND uc.estadoRegistro = :estadoRegistro " +
+            "ORDER BY uc.cliente.razonSocial ASC")
+    List<ClienteEntity> findClientesByUsuarioId(@Param("usuarioId") Long usuarioId,
+                                                @Param("estadoRegistro") String estadoRegistro);
 }

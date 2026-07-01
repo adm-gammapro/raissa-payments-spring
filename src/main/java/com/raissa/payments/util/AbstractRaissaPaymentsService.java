@@ -91,4 +91,17 @@ public class AbstractRaissaPaymentsService extends AbstractService {
 
         return PageRequest.of(page, size, Sort.by(direction, new String[]{sortField}));
     }
+
+    public static String enmascararTexto(String valorOriginal) {
+        if (valorOriginal != null && valorOriginal.length() > 4) {
+            String ultimosCuatro = valorOriginal.substring(valorOriginal.length() - 4);
+            String asteriscos = "*".repeat(valorOriginal.length() - 4);
+
+            String resultado = asteriscos + ultimosCuatro;
+
+            return resultado;
+        } else {
+            return valorOriginal;
+        }
+    }
 }

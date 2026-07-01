@@ -23,9 +23,12 @@ public interface PerfilRepository extends JpaRepository<PerfilEntity, Long> {
               AND (:estadoRegistro IS NULL OR p.estadoRegistro = :estadoRegistro)
               AND (:descripcion IS NULL OR CAST(:descripcion AS string) IS NULL
               OR UPPER(p.descripcion) LIKE UPPER(CONCAT('%', CAST(:descripcion AS string), '%')))
+              AND (:abreviatura IS NULL OR CAST(:abreviatura AS string) IS NULL
+              OR UPPER(p.abreviatura) LIKE UPPER(CONCAT('%', CAST(:abreviatura AS string), '%')))
             """)
     Page<PerfilEntity> searchByEmpresa(@Param("estadoRegistro") String estadoRegistro,
                                        @Param("descripcion") String descripcion,
+                                       @Param("abreviatura") String abreviatura,
                                        @Param("idEmpresa") Long idEmpresa,
                                        @Param("codigoSistema") String codigoSistema,
                                        Pageable pageable);

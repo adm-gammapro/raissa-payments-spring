@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Formula;
 
 import java.time.LocalDate;
 
@@ -44,6 +45,9 @@ public class UsuarioEntity extends Auditoria {
 
     @Column(name = "c_apemat", nullable = false)
     private String apeMaterno;
+
+    @Formula("LOWER(c_nombre || ' ' || c_apepat || ' ' || c_apemat)")
+    private String nombreCompletoBusqueda;
 
     @Column(name = "c_clausu", nullable = false)
     private String password;

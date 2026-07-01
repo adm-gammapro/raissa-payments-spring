@@ -71,6 +71,8 @@ public abstract class UsuarioMapper extends EntityMapper<UsuarioEntity, Long> {
     @Mapping(target = "disabled", ignore = true)
     @Mapping(target = "estadoRegistro", ignore = true)
     @Mapping(target = "username", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "indicadorExpiracion", ignore = true)
     @Mapping(target = "audiFechIns", ignore = true)
     @Mapping(target = "audiUsuario", ignore = true)
     @Mapping(target = "audiNomTerminal", ignore = true)

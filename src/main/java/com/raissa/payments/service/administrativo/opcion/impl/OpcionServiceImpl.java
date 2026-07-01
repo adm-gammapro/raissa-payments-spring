@@ -26,7 +26,7 @@ public class OpcionServiceImpl implements OpcionService {
     private final ModuloMapper moduloMapper;
 
     public MenuUsuarioResponseDto getOpcionesXUsuario(String username, Long idEmpresa) {
-        var modulos = moduloRespository.listModulos(username, idEmpresa);
+        var modulos = moduloRespository.listModulos(username, idEmpresa, codigoSistema);
         if (modulos.isEmpty()) {
             throw new NotFoundException("Módulos no encontrados");
         }

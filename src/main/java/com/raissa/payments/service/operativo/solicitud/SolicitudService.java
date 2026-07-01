@@ -1,5 +1,7 @@
 package com.raissa.payments.service.operativo.solicitud;
 
+import com.raissa.payments.domain.dto.operativo.administrativo.request.ConsultaVoucherAbonoSolicitudRequestDto;
+import com.raissa.payments.domain.dto.operativo.administrativo.response.ConstanciaPagoResponse;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.FlujoSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.LiquidacionSolicitudRequestDto;
 import com.raissa.payments.domain.dto.operativo.solicitud.request.ObservacionFlujoSolicitudRequestDto;
@@ -26,4 +28,10 @@ public interface SolicitudService {
     List<ObservacionResponseDto> listObservacion(ObservacionRequestDto dto);
 
     LiquidacionSolicitudResponseDto getResumenLiquidacion(LiquidacionSolicitudRequestDto req);
+
+    ConstanciaPagoResponse obtenerConstanciaPago(ConsultaVoucherAbonoSolicitudRequestDto req);
+
+    byte[] generarConstanciaPagoPDF(ConsultaVoucherAbonoSolicitudRequestDto req);
+
+    void enviarConstanciaPagoCorreo(ConsultaVoucherAbonoSolicitudRequestDto req);
 }

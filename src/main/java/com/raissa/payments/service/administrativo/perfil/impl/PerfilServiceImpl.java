@@ -146,7 +146,8 @@ public class PerfilServiceImpl extends AbstractRaissaPaymentsService implements 
         Pageable pageable = buildPageable(perfilSearch);
 
         Page<PerfilEntity> pagePerfilEntity = perfilRepository.searchByEmpresa(perfilSearch.getEstadoRegistro(),
-                perfilSearch.getNombrePerfil(),
+                perfilSearch.getDescripcion(),
+                perfilSearch.getAbreviatura(),
                 perfilSearch.getCodigoCliente(),
                 codigoSistema,
                 pageable);

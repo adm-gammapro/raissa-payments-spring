@@ -57,6 +57,12 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!-- RabbitMQ (AMQP) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
 		<!-- Validaciones de request y DTOs usando Jakarta Validation (@Valid, @NotNull, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -160,6 +166,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<!-- Flying Saucer - HTML to PDF -->
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf-openpdf</artifactId>
+			<version>9.1.22</version>
 		</dependency>
 
 		<!-- ========================================================= -->
